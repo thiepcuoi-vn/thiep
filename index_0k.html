@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lễ Thành Hôn</title>
+
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #fff;
+    }
+
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+
+    /* ==================================================
+       BÌA THIỆP
+
+       Luôn hiển thị khi mới mở.
+       ================================================== */
+
+    #cover {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: #fff;
+    }
+
+
+    /* ==================================================
+       NỘI DUNG THIỆP
+
+       Ẩn lúc đầu.
+       Chỉ hiện sau khi nhấn IMAGE160.
+       ================================================== */
+
+    #inside {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: none;
+      background: #fff;
+    }
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- ==================================================
+       1. BÌA THIỆP
+
+       KHÔNG SỬA cover.html.
+
+       index.html sẽ tự tìm phần tử:
+
+       #IMAGE160
+
+       bên trong iframe này.
+       ================================================== -->
+
+  <iframe id="cover" title="Bìa thiệp">
+  </iframe>
+
+
+  <!-- ==================================================
+       2. NỘI DUNG THIỆP
+
+       inside.html được tải sẵn nhưng bị ẩn.
+
+       guest được truyền sang inside.html.
+       ================================================== -->
+
+  <iframe id="inside" title="Nội dung thiệp">
+  </iframe>
+
+
+  <script>
+
+
+    /* ==================================================
+       INDEX.HTML
+
+       NHIỆM VỤ:
+
+       1. Lấy guest từ URL.
+       2. Truyền guest cho cover.html.
+       3. Truyền guest cho inside.html.
+       4. Chờ cover.html tải xong.
+       5. Tìm #IMAGE160 bên trong cover.
+       6. Chỉ #IMAGE160 mới được mở thiệp.
+       7. Ghi nhận lượt truy cập.
+       8. Ẩn cover.
+       9. Hiện inside.
+
+       QUAN TRỌNG:
+
+       KHÔNG CẦN SỬA cover.html.
+       ================================================== */
+
+
+    /* ==================================================
+       1. LẤY MÃ KHÁCH TỪ URL
+       ================================================== */
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const guestId =
+      params.get('guest') || '';
+
+
+    /* ==================================================
+       2. API GOOGLE APPS SCRIPT
+       ================================================== */
+
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycbze8zlXBPNZy_qfemB8BV3YOVC7Phn_BMCACGcd9hnluMmmkaBER2OmZ2qUPKMaPznxPw/exec';
+
+
+    /* ==================================================
+       3. TẠO / LẤY VISITOR ID
+       ================================================== */
+
+    function getVisitorId() {
+
+      const KEY =
+        'THIEP_VISITOR_ID';
+
+
+      let visitorId =
+        localStorage.getItem(KEY);
+
+
+      /*
+       * Nếu trình duyệt chưa có visitorId
+       */
+
+      if (!visitorId) {
+
+        visitorId =
+          'V-' +
+          Date.now() +
+          '-' +
+          Math.random()
+            .toString(36)
+            .slice(2, 10);
+
+
+        /*
+         * Lưu visitorId
+         */
+
+        localStorage.setItem(
+          KEY,
+          visitorId
+        );
+
+      }
+
+
+      return visitorId;
+
+    }
+
+
+    /* ==================================================
+       4. GHI NHẬN LƯỢT TRUY CẬP
+       ================================================== */
+
+    async function recordGuestView() {
+
+
+      /*
+       * Không có guestId
+       * thì không ghi nhận.
+       */
+
+      if (!guestId) {
+
+        console.log(
+          'Không có guestId - không ghi nhận lượt xem.'
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+
+        /*
+         * Lấy visitor ID
+         */
+
+        const visitorId =
+          getVisitorId();
+
+
+        /*
+         * Tạo URL API
+         */
+
+        const url =
+          API_URL +
+          '?action=recordView' +
+          '&id=' +
+          encodeURIComponent(guestId) +
+          '&visitorId=' +
+          encodeURIComponent(visitorId);
+
+
+        /*
+         * DEBUG
+         */
+
+        console.log(
+          'recordView URL:',
+          url
+        );
+
+
+        /*
+         * Gửi request
+         */
+
+        const response =
+          await fetch(url);
+
+
+        /*
+         * Kiểm tra HTTP
+         */
+
+        if (!response.ok) {
+
+          throw new Error(
+            'API HTTP error: ' +
+            response.status
+          );
+
+        }
+
+
+        /*
+         * Đọc JSON
+         */
+
+        const data =
+          await response.json();
+
+
+        /*
+         * DEBUG
+         */
+
+        console.log(
+          'Kết quả recordView:',
+          data
+        );
+
+
+      } catch (error) {
+
+
+        /*
+         * Nếu API lỗi,
+         * thiệp vẫn phải mở bình thường.
+         */
+
+        console.error(
+          'Lỗi ghi nhận lượt truy cập:',
+          error
+        );
+
+      }
+
+    }
+
+
+    /* ==================================================
+       5. LẤY 2 IFRAME
+       ================================================== */
+
+    const coverFrame =
+      document.getElementById('cover');
+
+
+    const insideFrame =
+      document.getElementById('inside');
+
+
+    /* ==================================================
+       6. BIẾN CHỐNG MỞ NHIỀU LẦN
+       ================================================== */
+
+    let invitationOpened =
+      false;
+
+
+    /* ==================================================
+       7. HÀM MỞ THIỆP
+       
+       Chỉ được gọi khi IMAGE160 được click.
+       ================================================== */
+
+    function openInvitation() {
+
+
+      /*
+       * Nếu đã mở rồi
+       * thì không làm gì nữa.
+       */
+
+      if (invitationOpened) {
+
+        return;
+
+      }
+
+
+      /*
+       * Đánh dấu đã mở.
+       */
+
+      invitationOpened =
+        true;
+
+
+      console.log(
+        'IMAGE160 được nhấn → mở thiệp.'
+      );
+
+
+      /*
+       * Ghi nhận lượt truy cập.
+
+       * Không await để việc mở thiệp
+       * không phải chờ API.
+       */
+
+      recordGuestView();
+
+
+      /*
+       * Ẩn cover.
+       */
+
+      coverFrame.style.display =
+        'none';
+
+
+      /*
+       * Hiện inside.
+       */
+
+      insideFrame.style.display =
+        'block';
+
+    }
+
+
+    /* ==================================================
+       8. GẮN GUEST CHO COVER
+       ================================================== */
+
+    if (guestId) {
+
+      coverFrame.src =
+        'cover.html?guest=' +
+        encodeURIComponent(guestId);
+
+    } else {
+
+      coverFrame.src =
+        'cover.html';
+
+    }
+
+
+    /* ==================================================
+       9. GẮN GUEST CHO INSIDE
+       ================================================== */
+
+    if (guestId) {
+
+      insideFrame.src =
+        'inside.html?guest=' +
+        encodeURIComponent(guestId);
+
+    } else {
+
+      insideFrame.src =
+        'inside.html';
+
+    }
+
+
+    /* ==================================================
+       10. CHỜ COVER.HTML TẢI XONG
+       
+       Sau khi cover tải xong,
+       index.html truy cập trực tiếp DOM
+       của cover.html.
+       ================================================== */
+
+    coverFrame.addEventListener(
+      'load',
+      function () {
+
+
+        console.log(
+          'cover.html đã tải xong.'
+        );
+
+
+        try {
+
+
+          /*
+           * Lấy document bên trong iframe.
+           */
+
+          const coverDocument =
+            coverFrame.contentDocument ||
+            coverFrame.contentWindow.document;
+
+
+          /*
+           * TÌM ĐÚNG IMAGE160
+           */
+
+          const image160 =
+            coverDocument.getElementById(
+              'IMAGE160'
+            );
+
+
+          /* ----------------------------------------------
+             KIỂM TRA IMAGE160
+             ---------------------------------------------- */
+
+          if (!image160) {
+
+            console.error(
+              'Không tìm thấy #IMAGE160 trong cover.html.'
+            );
+
+            return;
+
+          }
+
+
+          console.log(
+            'Đã tìm thấy #IMAGE160 trong cover.html.'
+          );
+
+
+          /* ----------------------------------------------
+             GẮN CLICK CHO IMAGE160
+             ---------------------------------------------- */
+
+          image160.addEventListener(
+            'click',
+            function () {
+
+
+              console.log(
+                'Đã click đúng IMAGE160.'
+              );
+
+
+              /*
+               * Chỉ IMAGE160 mới gọi hàm này.
+               */
+
+              openInvitation();
+
+            }
+          );
+
+
+          console.log(
+            'Đã gắn sự kiện mở thiệp cho IMAGE160.'
+          );
+
+
+        } catch (error) {
+
+
+          /*
+           * Nếu không thể truy cập iframe,
+           * báo lỗi để kiểm tra.
+           */
+
+          console.error(
+            'Không thể truy cập IMAGE160 trong cover.html:',
+            error
+          );
+
+        }
+
+      }
+    );
+
+
+  </script>
+
+
+</body>
+
+</html>
