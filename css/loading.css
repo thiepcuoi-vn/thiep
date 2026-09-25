@@ -1,0 +1,160 @@
+/* =========================================================
+   LADI LOADING
+   ---------------------------------------------------------
+   File: css/loading.css
+   Mục đích: CSS riêng cho màn hình loading của LadiPage
+   Không xóa HTML loading trong cover.html
+   ========================================================= */
+
+
+/* =========================================================
+   1. LỚP PHỦ LOADING TOÀN MÀN HÌNH
+   ========================================================= */
+
+.page-loading {
+    z-index: 900000000000; /* Đặt loading lên lớp rất cao */
+    position: fixed; /* Cố định loading theo màn hình */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    height: 100%; /* Chiếm toàn bộ chiều cao */
+    top: 0; /* Sát mép trên màn hình */
+    left: 0; /* Sát mép trái màn hình */
+    background-color: rgba(0, 0, 0, .1); /* Nền đen mờ 10% */
+}
+
+
+/* =========================================================
+   2. VÙNG CHỨA VÒNG TRÒN LOADING
+   ========================================================= */
+
+.page-loading .loading {
+    width: 80px; /* Chiều rộng vùng loading */
+    height: 80px; /* Chiều cao vùng loading */
+    top: 0; /* Căn theo phía trên */
+    left: 0; /* Căn theo phía trái */
+    bottom: 0; /* Căn theo phía dưới */
+    right: 0; /* Căn theo phía phải */
+    margin: auto; /* Đưa loading vào chính giữa */
+    overflow: hidden; /* Không cho chấm tràn ra ngoài */
+    position: absolute; /* Định vị tuyệt đối trong màn hình */
+}
+
+
+/* =========================================================
+   3. THIẾT LẬP CHUNG CHO 12 CHẤM
+   ========================================================= */
+
+.page-loading .loading div {
+    position: absolute; /* Cho phép đặt từng chấm */
+    width: 6px; /* Chiều rộng mỗi chấm */
+    height: 6px; /* Chiều cao mỗi chấm */
+    background: #fff; /* Màu trắng */
+    border-radius: 50%; /* Biến hình vuông thành hình tròn */
+    animation: page-loading 1.2s linear infinite; /* Chạy hiệu ứng xoay liên tục */
+}
+
+
+/* =========================================================
+   4. VỊ TRÍ + THỜI GIAN CỦA 12 CHẤM
+   ========================================================= */
+
+/* Chấm 1 */
+.page-loading .loading div:nth-child(1) {
+    animation-delay: 0s; /* Thời gian bắt đầu */
+    top: 37px; /* Vị trí theo chiều dọc */
+    left: 66px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 2 */
+.page-loading .loading div:nth-child(2) {
+    animation-delay: -0.1s; /* Trễ 0.1 giây */
+    top: 22px; /* Vị trí theo chiều dọc */
+    left: 62px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 3 */
+.page-loading .loading div:nth-child(3) {
+    animation-delay: -0.2s; /* Trễ 0.2 giây */
+    top: 10px; /* Vị trí theo chiều dọc */
+    left: 52px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 4 */
+.page-loading .loading div:nth-child(4) {
+    animation-delay: -0.3s; /* Trễ 0.3 giây */
+    top: 2px; /* Vị trí theo chiều dọc */
+    left: 37px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 5 */
+.page-loading .loading div:nth-child(5) {
+    animation-delay: -0.4s; /* Trễ 0.4 giây */
+    top: 10px; /* Vị trí theo chiều dọc */
+    left: 22px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 6 */
+.page-loading .loading div:nth-child(6) {
+    animation-delay: -0.5s; /* Trễ 0.5 giây */
+    top: 22px; /* Vị trí theo chiều dọc */
+    left: 10px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 7 */
+.page-loading .loading div:nth-child(7) {
+    animation-delay: -0.6s; /* Trễ 0.6 giây */
+    top: 37px; /* Vị trí theo chiều dọc */
+    left: 2px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 8 */
+.page-loading .loading div:nth-child(8) {
+    animation-delay: -0.7s; /* Trễ 0.7 giây */
+    top: 52px; /* Vị trí theo chiều dọc */
+    left: 10px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 9 */
+.page-loading .loading div:nth-child(9) {
+    animation-delay: -0.8s; /* Trễ 0.8 giây */
+    top: 62px; /* Vị trí theo chiều dọc */
+    left: 22px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 10 */
+.page-loading .loading div:nth-child(10) {
+    animation-delay: -0.9s; /* Trễ 0.9 giây */
+    top: 67px; /* Vị trí theo chiều dọc */
+    left: 37px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 11 */
+.page-loading .loading div:nth-child(11) {
+    animation-delay: -1s; /* Trễ 1 giây */
+    top: 62px; /* Vị trí theo chiều dọc */
+    left: 52px; /* Vị trí theo chiều ngang */
+}
+
+/* Chấm 12 */
+.page-loading .loading div:nth-child(12) {
+    animation-delay: -1.1s; /* Trễ 1.1 giây */
+    top: 52px; /* Vị trí theo chiều dọc */
+    left: 62px; /* Vị trí theo chiều ngang */
+}
+
+
+/* =========================================================
+   5. ANIMATION
+   ========================================================= */
+
+@keyframes page-loading {
+    0%,
+    100%,
+    20%,
+    80% {
+        transform: scale(1); /* Kích thước chấm bình thường */
+    }
+
+    50% {
+        transform: scale(1.5); /* Chấm phóng to 1.5 lần */
+    }
+}
